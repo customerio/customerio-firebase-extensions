@@ -1,0 +1,217 @@
+name: sync-customerio
+version: 0.0.1
+specVersion: v1beta  # Firebase Extensions specification version (do not edit)
+
+displayName: Sync contacts with Customer.io
+icon: sync-customerio.png
+description:
+  Sync customer data from Firebase Authentication and Firestore collections to Customer.io.
+
+license: Apache-2.0
+
+sourceUrl: https://github.com/customerio/customerio-firebase-extensions/tree/main/
+releaseNotesUrl: https://github.com/customerio/customerio-firebase-extensions/tree/main/CHANGELOG.md
+
+author:
+  authorName: Customer.io
+  url: https://customer.io
+
+contributors:
+  - authorName: Colby Ausen
+    url: https://github.com/clabland
+  - authorName: Jatin Nagpal
+    url: https://github.com/jatinn
+
+billingRequired: true
+
+resources:
+  - name: createAuthProfile
+    type: firebaseextensions.v1beta.function
+    description: |
+      Adds profiles to your Customer.io account when they are created using Firebase Authentication. Syncs the following data if available:
+        - id
+        - email
+        - phone
+        - email_verified
+        - display_name
+        - photo_url
+        - disabled
+        - created_at
+        - last_sign_in
+    properties:
+      location: ${param:LOCATION}
+      runtime: nodejs16
+      eventTrigger:
+        eventType: providers/firebase.auth/eventTypes/user.create
+        resource: projects/${param:PROJECT_ID}
+
+  - name: deleteAuthProfile
+    type: firebaseextensions.v1beta.function
+    description: Removes profiles from your Customer.io account when they are deleted using Firebase Authentication.
+    properties:
+      location: ${param:LOCATION}
+      runtime: nodejs16
+      eventTrigger:
+        eventType: providers/firebase.auth/eventTypes/user.delete
+        resource: projects/${param:PROJECT_ID}
+
+  - name: syncFirestoreProfile
+    type: firebaseextensions.v1beta.function
+    description: |
+      Monitors specified Firestore collection and syncs changes with your Customer.io account.
+      All changes (create, delete & update) to the records in the collection will sync the data accordingly.
+      Using collection you have more control on what profile data is synced.
+      The extension looks for two fields in document structure:
+
+          **name:** `identifiers`
+          **description:** The person you want to perform an action on.
+          **type:** Object
+              - must provide one of either id or email
+              - you cannot pass multiple identifiers
+          **notes:** Optional field however highly recomended to include otherwise the document id will be used as the identifier.
+
+          **name:** `attributes`
+          **description:** Attributes that you want to add or update for this person.
+          **type:** Object
+          **notes:** Optional field however if missing only the data that would be synced in the document id as the identifier.
+
+          Example document since `identifiers` is missing the document id will implictly used
+          ```json
+          # /users/db01
+          {
+            "attributes": {
+              "first_name": "John",
+              "last_name": "Doe",
+              "email": "john.doe@example.com",
+              "plan": "basic"
+            }
+          }
+          ```
+
+          Example document that overrides the identifier
+
+          ```json
+          # /users/db01
+          {
+            "identifiers": {
+              "email": "john.doe@example.com",
+            },
+            "attributes": {
+              "first_name": "John",
+              "last_name": "Doe",
+              "email": "john.doe@example.com",
+              "plan": "basic"
+            }
+          }
+          ```
+    properties:
+      location: ${param:LOCATION}
+      runtime: nodejs16
+      eventTrigger:
+        eventType: providers/cloud.firestore/eventTypes/document.write
+        resource: projects/${param:PROJECT_ID}/databases/(default)/documents/${param:USERS_COLLECTION}/{id}
+
+externalServices:
+  - name: Customer.io
+    pricingUri: https://customer.io/pricing/
+
+params:
+  - param: LOCATION
+    label: Cloud Functions location
+    description: >-
+      Where do you want to deploy the functions created for this extension?
+      For help selecting a location, refer to the [location selection
+      guide](https://firebase.google.com/docs/functions/locations).
+    type: select
+    options:
+      - label: Iowa (us-central1)
+        value: us-central1
+      - label: South Carolina (us-east1)
+        value: us-east1
+      - label: Northern Virginia (us-east4)
+        value: us-east4
+      - label: Los Angeles (us-west2)
+        value: us-west2
+      - label: Salt Lake City (us-west3)
+        value: us-west3
+      - label: Las Vegas (us-west4)
+        value: us-west4
+      - label: Warsaw (europe-central2)
+        value: europe-central2
+      - label: Belgium (europe-west1)
+        value: europe-west1
+      - label: London (europe-west2)
+        value: europe-west2
+      - label: Frankfurt (europe-west3)
+        value: europe-west3
+      - label: Zurich (europe-west6)
+        value: europe-west6
+      - label: Taiwan (asia-east1)
+        value: asia-east1
+      - label: Hong Kong (asia-east2)
+        value: asia-east2
+      - label: Tokyo (asia-northeast1)
+        value: asia-northeast1
+      - label: Osaka (asia-northeast2)
+        value: asia-northeast2
+      - label: Seoul (asia-northeast3)
+        value: asia-northeast3
+      - label: Mumbai (asia-south1)
+        value: asia-south1
+      - label: Singapore (asia-southeast1)
+        value: asia-southeast1
+      - label: Jakarta (asia-southeast2)
+        value: asia-southeast2
+      - label: Montreal (northamerica-northeast1)
+        value: northamerica-northeast1
+      - label: Sao Paulo (southamerica-east1)
+        value: southamerica-east1
+      - label: Sydney (australia-southeast1)
+        value: australia-southeast1
+    required: true
+    immutable: true
+    default: us-central1
+
+  - param: SITE_ID
+    label: Customer.io Site ID
+    description:
+      This can be found on your [API Credentials page](https://fly.customer.io/settings/api_credentials).
+    type: string
+    validationRegex: ^\S+$
+    validationErrorMessage: Site ID cannot contain spaces.
+    example: siteid
+    required: true
+
+  - param: API_KEY
+    label: Customer.io API Key
+    description:
+      This can be found on your [API Credentials page](https://fly.customer.io/settings/api_credentials).
+    type: secret
+    validationRegex: ^\S+$
+    validationErrorMessage: API Key cannot contain spaces.
+    example: apikey
+    required: true
+
+  - param: REGION
+    label: Customer.io Datacenter Region
+    description:
+      This can be found on your [account's privacy page](https://fly.customer.io/settings/privacy).      
+    type: select
+    options:
+      - label: US
+        value: us
+      - label: EU
+        value: eu
+    default: us
+    required: true
+
+  - param: USERS_COLLECTION
+    label: Firestore collection of user records to sync
+    description: test
+    type: string
+    example: users
+    # ideally we want this to be optional however if unset then see errors
+    # and slowdowns inserting into firestore so set default value to an unsed
+    # collection name.
+    default: _unconfigured_
+    required: true 
