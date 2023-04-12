@@ -2,91 +2,38 @@
 
 **Author**: Customer.io (**[https://customer.io](https://customer.io)**)
 
-**Description**: Sync customer data from Firebase Authentication and Firestore collections to Customer.io and send transactional and marketing emails, push notifications, SMS and more.
+**Description**: Sync customers to Customer.io for sending transactional and marketing emails, push, and in-app messages.
 
 
 
-**Details**: Customer.io allows you to utilize the data about your users to send personalized messages to them over different channels.
+**Details**: Install this extension to sync customers to Customer.io. This extension:
 
-This extension allows you to sync your users to your Customer.io account.
-Users can be managed by Firebase Authentication and any time users are creted or deleted those changes will be synced with your Customer.io.
-Alternatively you can specify a Firestore collection to monitor where user records are stored and those changes can also be synced.
+- Adds new customers when they sign up through Firebase Authentication.
+- Listens to a specified Cloud Firestore collection for updates to customer attributes.
 
-For user profiles created from Firebase Authentication the extension will sync the following data if available:
-- id
-- email
-- phone
-- email_verified
-- display_name
-- photo_url
-- disabled
-- created_at
-- last_sign_in
-
-With using a Firestore collection you have more control on how profiles are identified and the data to be synced.
-Example user document
-```json
-{
-	"identifiers": {
-		"id": "db01",
-	},
-	"attributes": {
-		"first_name": "John",
-		"last_name": "Doe",
-		"email": "john.doe@example.com",
-		"plan": "basic"
-	}
-}
-```
-Alternatively we also support email as an identifier
-```json
-{
-	"identifiers": {
-		"email": "jane.doe@example.com",
-	},
-	"attributes": {
-		"first_name": "Jane",
-		"last_name": "Doe",
-		"plan": "premiun",
-		"created_at": 1361205308
-	}
-}
-```
-
-For more info visit docs ?????
+The synced data can then be used to trigger transactional messages and automated marketing campaigns in Customer.io.
 
 **Additional Setup**
 
-This extension also requires you to have a [Customer.io](https://customer.io) account.
-The API credentials will be needed during install step for the extension.
+Before installing this extension, set up Firebase Authentication to manage your users.  Optionally, set up a Cloud Firestore database to store additional customer data.  
+
+You’ll need a Customer.io account set up before installing this extension.  [Get started for free](https://customer.io) on the Customer.io website.
+
+Install the Customer.io iOS, Android, React Native, Expo, or Flutter [SDKs](https://customer.io/docs/sdk/) to send rich push notifications and in-app messages to customers in your mobile app.
 
 **Billing**
 
-Along with charges for your Customer.io account this extension uses other Firebase or Google Cloud services which may have associated charges:
+This extension uses the following Firebase services which may have associated charges:
 
-* Cloud Secret Manager
-* Cloud Functions
-* Cloud Firestore
-* Firebase Authentication
+- Cloud Firestore
+- Cloud Functions
+- Firebase Authentication
 
-### 🧩 Install this extension
+This extension also uses the following third-party services:
 
-**Console**
+- [Customer.io](http://Customer.io/pricing) (pricing information)
 
-[![Install this extension in your Firebase project](https://www.gstatic.com/mobilesdk/210513_mobilesdk/install-extension.png "Install this extension in your Firebase project")][install-link]
-
-[install-link]: https://console.firebase.google.com/project/_/extensions/install?ref=customerio/sync-customerio
-
-**Firebase CLI**
-
-```bash
-firebase ext:install customerio/sync-customerio --project=[your-project-id]
-```
-
-> Learn more about installing extensions in the Firebase Extensions documentation:
-> [console](https://firebase.google.com/docs/extensions/install-extensions?platform=console),
-> [CLI](https://firebase.google.com/docs/extensions/install-extensions?platform=cli)
-
+You are responsible for any costs associated with your use of these services.
 
 
 
@@ -124,21 +71,21 @@ firebase ext:install customerio/sync-customerio --project=[your-project-id]
 * **syncFirestoreProfile:** Monitors specified Firestore collection and syncs changes with your Customer.io account.
 All changes (create, delete & update) to the records in the collection will sync the data accordingly.
 Using collection you have more control on what profile data is synced.
-The extension looks for two fields in document structure:
+The extension looks for two fields in the document structure:
 
     **name:** `identifiers`
-    **description:** The person you want to perform an action on.
+    **description:** The person you want to create or update.
     **type:** Object
         - must provide one of either id or email
         - you cannot pass multiple identifiers
-    **notes:** Optional field however highly recomended to include otherwise the document id will be used as the identifier.
+    **notes:** Optional field; document id will be used as the identifier if nothing else is specified.
 
     **name:** `attributes`
     **description:** Attributes that you want to add or update for this person.
     **type:** Object
-    **notes:** Optional field however if missing only the data that would be synced in the document id as the identifier.
+    **notes:** Optional field
 
-    Example document since `identifiers` is missing the document id will implictly used
+    Example document if `identifiers` isn't included.
     ```json
     # /users/db01
     {
@@ -151,7 +98,7 @@ The extension looks for two fields in document structure:
     }
     ```
 
-    Example document that overrides the identifier
+    Example document if 'identifiers' is included.
 
     ```json
     # /users/db01
