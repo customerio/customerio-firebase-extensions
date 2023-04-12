@@ -5,7 +5,7 @@ specVersion: v1beta  # Firebase Extensions specification version (do not edit)
 displayName: Sync contacts with Customer.io
 icon: sync-customerio.png
 description:
-  Sync customer data from Firebase Authentication and Firestore collections to Customer.io.
+  Sync customers to Customer.io for sending transactional and marketing emails, push, and in-app messages.
 
 license: Apache-2.0
 
@@ -61,21 +61,21 @@ resources:
       Monitors specified Firestore collection and syncs changes with your Customer.io account.
       All changes (create, delete & update) to the records in the collection will sync the data accordingly.
       Using collection you have more control on what profile data is synced.
-      The extension looks for two fields in document structure:
+      The extension looks for two fields in the document structure:
 
           **name:** `identifiers`
-          **description:** The person you want to perform an action on.
+          **description:** The person you want to create or update.
           **type:** Object
               - must provide one of either id or email
               - you cannot pass multiple identifiers
-          **notes:** Optional field however highly recomended to include otherwise the document id will be used as the identifier.
+          **notes:** Optional field; document id will be used as the identifier if nothing else is specified.
 
           **name:** `attributes`
           **description:** Attributes that you want to add or update for this person.
           **type:** Object
-          **notes:** Optional field however if missing only the data that would be synced in the document id as the identifier.
+          **notes:** Optional field
 
-          Example document since `identifiers` is missing the document id will implictly used
+          Example document if `identifiers` isn't included.
           ```json
           # /users/db01
           {
@@ -88,7 +88,7 @@ resources:
           }
           ```
 
-          Example document that overrides the identifier
+          Example document if 'identifiers' is included.
 
           ```json
           # /users/db01
