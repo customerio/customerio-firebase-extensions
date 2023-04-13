@@ -23,8 +23,9 @@ export type Config = {
 };
 
 export type UserRecord = {
-  identifiers: {
-    [key: string]: string;
+  identifier: {
+    type: string;
+    value: string;
   };
 
   attributes: {

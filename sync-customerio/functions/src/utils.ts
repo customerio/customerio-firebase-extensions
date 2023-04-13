@@ -25,11 +25,15 @@ export function buildUserRecord(ctx: Context, documentId: string, data: function
   }
 
   let allowedIdentifier = false;
-  let emailIdentifier = false;
+  let emailID = "";
+  let ID = "";
   Object.keys(identifiers).forEach((key) => {
-    if ( key.toLowerCase() === "id" || key.toLowerCase() === "email" ) {
+    if ( key.toLowerCase() === "id" ) {
       allowedIdentifier = true;
-      emailIdentifier = key.toLowerCase() === "email";
+      ID = identifiers[key];
+    } else if ( key.toLowerCase() === "email" ) {
+      allowedIdentifier = true;
+      emailID = identifiers[key];
     }
   });
 
@@ -41,12 +45,15 @@ export function buildUserRecord(ctx: Context, documentId: string, data: function
     }};
   }
 
-  if ( emailIdentifier && !attributes.hasOwnProperty("id") ) {
+  if ( emailID != "" && !attributes.hasOwnProperty("id") ) {
     attributes["id"] = documentId;
   }
 
   const record: UserRecord = {
-    identifiers: identifiers,
+    identifier: {
+      type: emailID !== "" ? "email" : "id",
+      value: emailID !== "" ? emailID: ID,
+    },
     attributes: attributes,
   };
 

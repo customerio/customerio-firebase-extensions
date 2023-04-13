@@ -5,14 +5,14 @@ import { UserRecord } from "./types";
 
 export const firestoreOnWrite = functions.firestore.document("").onWrite(async (change: functions.Change<functions.firestore.DocumentSnapshot>): Promise<void>  => {
   const ctx = Context.get();
-    ctx.info("starting extension", {
-      document_id: change.after.id,
-        change: change,
-    });
+  ctx.info("starting extension", {
+    document_id: change.after.id,
+    change: change,
+  });
 
   let documentId: string = change.after.id;
-  let prev: UserRecord = {};
-  let next: UserRecord = {};
+  let prev: UserRecord = {} as UserRecord;
+  let next: UserRecord = {} as UserRecord;
 
   if ( change.before.exists ) {
     const result = buildUserRecord(ctx, documentId, change.before);
@@ -38,14 +38,12 @@ export const firestoreOnWrite = functions.firestore.document("").onWrite(async (
     next = result.value;
   } else {
     // document has been deleted
-    ctx.destroy(Object.values(prev.identifiers)[0]).then(
-      () => {
-        ctx.info("deleted profile", {profile: prev});
-      },
-      (err) => {
-        ctx.error("error deleting profile", {error: err});
-      },
-    );
+    try {
+      await ctx.destroy(prev.identifier.value)
+      ctx.info("deleted profile", {profile: prev});
+    } catch (err) {
+      ctx.error("error deleting profile", {error: err});
+    }
     return;
   }
 
@@ -69,12 +67,10 @@ export const firestoreOnWrite = functions.firestore.document("").onWrite(async (
     attrChanges["created_at"] = Math.trunc(Date.now() / 1000);
   }
 
-  ctx.identify(Object.values(next.identifiers)[0], attrChanges).then(
-    () => {
-      ctx.info("synced profile", {profile: {identifiers: next.identifiers, attributes: attrChanges}});
-    },
-    (err) => {
-      ctx.error("error syncing profile",  err);
-    },
-  );
+  try {
+    await ctx.identify(next.identifier.value, attrChanges)
+    ctx.info("synced profile", {profile: {identifier: next.identifier, attributes: attrChanges}});
+  } catch (err) {
+    ctx.error("error syncing profile",  err);
+  }
 });

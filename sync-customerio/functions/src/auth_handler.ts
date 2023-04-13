@@ -16,26 +16,22 @@ export const authOnCreate = functions.auth.user().onCreate(async (user: function
     last_sign_in: Math.trunc(Date.parse(user.metadata.lastSignInTime)/1000),
   };
 
-  ctx.identify(user.uid, attributes).then(
-    () => {
-      ctx.info("created profile", {customer_id: user.uid, attributes: attributes});
-    },
-    (err) => {
-      ctx.error("error creating profile", {error: err});
-    },
-  );
+  try {
+    await ctx.identify(user.uid, attributes)
+    ctx.info("created profile", {customer_id: user.uid, attributes: attributes}); 
+  } catch (err) {
+    ctx.error("error creating profile", {error: err});
+  }
 });
 
 export const authOnDelete = functions.auth.user().onDelete(async (user: functions.auth.UserRecord) => {
   const ctx = Context.get();
   ctx.info("starting extension", {user: user});
 
-  ctx.destroy(user.uid).then(
-    () => {
-      ctx.info("deleted profile", {customer_id: user.uid});
-    },
-    (err) => {
-      ctx.error("error deleting profile", {error: err});
-    },
-  );
+  try {
+    await ctx.destroy(user.uid)
+    ctx.info("deleted profile", {customer_id: user.uid});
+  } catch (err) {
+    ctx.error("error deleting profile", {error: err});
+  }
 });
