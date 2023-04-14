@@ -31,9 +31,5 @@ export function loadConfig(): Config {
     config.region = new Region('https://track.local.customerio.dev/api/v1', 'https://api.local.customerio.dev/v1');
   }
 
-  if ( process.env.ENVIRONMENT == Environment.Test ) {
-    config.environment = Environment.Test;
-  }
-
   return config;
 };

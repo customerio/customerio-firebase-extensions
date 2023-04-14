@@ -5,7 +5,7 @@ import { UserRecord } from "./types";
 
 const ctx = Context.get();
 
-export const firestoreOnWrite = functions.firestore.document("users").onWrite(async (change: functions.Change<functions.firestore.DocumentSnapshot>): Promise<void>  => {
+export const firestoreOnWrite = functions.firestore.document(ctx.config.collection).onWrite(async (change: functions.Change<functions.firestore.DocumentSnapshot>): Promise<void>  => {
   ctx.info("starting extension", {
     document_id: change.after.id,
     change: change,
@@ -28,7 +28,6 @@ export const firestoreOnWrite = functions.firestore.document("users").onWrite(as
   }
 
   if ( change.after.exists ) {
-    console.log("Change after exists?", change)
     const result = buildUserRecord(ctx, documentId, change.after);
     if ( result.error ) {
       ctx.error("error building after user record", {
@@ -70,7 +69,6 @@ export const firestoreOnWrite = functions.firestore.document("users").onWrite(as
   }
 
   try {
-    console.log("trying", next, prev);
     await ctx.identify(next.identifier.value, attrChanges)
     ctx.info("synced profile", {profile: {identifier: next.identifier, attributes: attrChanges}});
   } catch (err) {

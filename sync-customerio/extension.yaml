@@ -207,7 +207,7 @@ params:
 
   - param: USERS_COLLECTION
     label: Firestore collection of user records to sync
-    description: test
+    description: A collection path to monitor for changes
     type: string
     example: users
     # ideally we want this to be optional however if unset then see errors

@@ -35,19 +35,21 @@ describe("Utils Tests", () => {
             email: "fake@customer.io"
         };
         let attributes1 = {
-            "attr1": "value1"
+            "attr1": "value1",
+            "attr2": "someValue"
         };
         let attributes2 = {
-            "attr1": "value2"
+            "attr1": "value2",
         };
-        const beforeSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers }, attributes: { ...attributes1 } }, 'users/doc1');
-        const afterSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers }, attributes: { ...attributes2 } }, 'users/doc1');
+        const beforeSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers }, attributes: { ...attributes1 } }, 'test/doc1');
+        const afterSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers }, attributes: { ...attributes2 } }, 'test/doc1');
         const change = makeChange(beforeSnap, afterSnap);
 
         wrapped(change);
 
         const expected = {
             "attr1": "value2",
+            "attr2": "",
             "id": "doc1",
         }
         sinon.assert.calledWith(identifyStub, "fake@customer.io", expected);
@@ -59,8 +61,8 @@ describe("Utils Tests", () => {
         let identifiers = {
             email: "fake@customer.io"
         };
-        const beforeSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers } }, 'users/doc1');
-        const afterSnap = firestore.makeDocumentSnapshot({} /* doc doesn't exist */ , 'users/doc1');
+        const beforeSnap = firestore.makeDocumentSnapshot({ identifiers: { ...identifiers } }, 'test/doc1');
+        const afterSnap = firestore.makeDocumentSnapshot({} /* doc doesn't exist */ , 'test/doc1');
         const change = makeChange(beforeSnap, afterSnap);
         
         wrapped(change);
