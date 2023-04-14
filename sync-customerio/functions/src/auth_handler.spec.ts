@@ -1,7 +1,6 @@
 import * as functions from "firebase-functions";
 import { Context } from "./context";
 import * as sinon from "sinon";
-//import { expect } from "chai";
 
 import { authOnCreate, authOnDelete } from "./auth_handler";
 
