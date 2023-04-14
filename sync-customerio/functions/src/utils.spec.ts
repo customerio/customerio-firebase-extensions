@@ -21,15 +21,14 @@ describe("Utils Tests", () => {
         sandbox.restore();
     });
 
-    it("should use id if given", () => {
-        let id = "the-id";
+    it("should default to doc id as identifier", () => {
         let attrs = {
             "one": "two",
             "three": "four"
         };
         sandbox.stub(doc, "get").callsFake((key) => {
             if(key === "identifiers") {
-                return { id }
+                return {}
             } else if(key === "attributes") {
                 return attrs;
             } else {
@@ -40,21 +39,40 @@ describe("Utils Tests", () => {
         let result = buildUserRecord(ctx, "fake", doc);
 
         expect(result.value?.identifier.type).to.equal("id");
-        expect(result.value?.identifier.value).to.equal(id);
+        expect(result.value?.identifier.value).to.equal("fake");
         expect(result.value?.attributes).to.equal(attrs);
     });
 
-    it("should use email if given", () => {
-        let email = "someone@customer.io";
+    it("should use id if given", () => {
+        let id = "the-id";
         let attrs = {
             "one": "two",
             "three": "four"
         };
         sandbox.stub(doc, "get").callsFake((key) => {
             if(key === "identifiers") {
-                return { email }
+                return { id }
             } else if(key === "attributes") {
-                return attrs;
+                return { ...attrs };
+            } else {
+                expect.fail();
+            }
+        });
+
+        let result = buildUserRecord(ctx, "fake", doc);
+
+        expect(result.value?.identifier.type).to.equal("id");
+        expect(result.value?.identifier.value).to.equal(id);
+        expect(result.value?.attributes).to.deep.equal(attrs);
+    });
+
+    it("should use email if given", () => {
+        let email = "someone@customer.io";
+        sandbox.stub(doc, "get").callsFake((key) => {
+            if(key === "identifiers") {
+                return { email };
+            } else if(key === "attributes") {
+                return { "one": "two", "three": "four" } ;
             } else {
                 expect.fail();
             }
@@ -64,6 +82,32 @@ describe("Utils Tests", () => {
 
         expect(result.value?.identifier.type).to.equal("email");
         expect(result.value?.identifier.value).to.equal(email);
-        expect(result.value?.attributes).to.equal(attrs);
+
+        expect(result.value?.attributes).to.deep.equal({ "one": "two", "three": "four", "id": "fake" });
+    });
+
+    it("should preserve attrs id if present", () => {
+        let email = "someone@customer.io";
+        let attrs = {
+            "one": "two",
+            "three": 4,
+            "id": "an-attr-id",
+        }
+        sandbox.stub(doc, "get").callsFake((key) => {
+            if(key === "identifiers") {
+                return { email };
+            } else if(key === "attributes") {
+                return { ...attrs };
+            } else {
+                expect.fail();
+            }
+        });
+
+        let result = buildUserRecord(ctx, "fake", doc)
+
+        expect(result.value?.identifier.type).to.equal("email");
+        expect(result.value?.identifier.value).to.equal(email);
+
+        expect(result.value?.attributes).to.deep.equal(attrs);
     });
 });

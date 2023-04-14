@@ -8,8 +8,8 @@ export function buildUserRecord(ctx: Context, documentId: string, data: function
 
   ctx.info("building user record", {
     data: data.data(),
-    identifiers:identifiers,
-    attributes:attributes,
+    identifiers,
+    attributes,
   });
 
   const numIdentifiers = Object.keys(identifiers).length;
