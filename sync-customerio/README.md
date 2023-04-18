@@ -48,7 +48,7 @@ You are responsible for any costs associated with your use of these services.
 
 * Customer.io Datacenter Region: This can be found on your [account's privacy page](https://fly.customer.io/settings/privacy).
 
-* Firestore collection of user records to sync: test
+* Firestore collection of user records to sync: A collection path to monitor for changes
 
 
 
