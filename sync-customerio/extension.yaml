@@ -29,15 +29,15 @@ resources:
     type: firebaseextensions.v1beta.function
     description: |
       Adds profiles to your Customer.io account when they are created using Firebase Authentication. Syncs the following data if available:
-        - id
-        - email
-        - phone
-        - email_verified
-        - display_name
-        - photo_url
-        - disabled
-        - created_at
-        - last_sign_in
+      - id
+      - email
+      - phone
+      - email_verified
+      - display_name
+      - photo_url
+      - disabled
+      - created_at
+      - last_sign_in
     properties:
       location: ${param:LOCATION}
       runtime: nodejs16
@@ -63,47 +63,47 @@ resources:
       Using collection you have more control on what profile data is synced.
       The extension looks for two fields in the document structure:
 
-          **name:** `identifiers`
-          **description:** The person you want to create or update.
-          **type:** Object
-              - must provide one of either id or email
-              - you cannot pass multiple identifiers
-          **notes:** Optional field; document id will be used as the identifier if nothing else is specified.
+      **name:** `identifiers`
+      **description:** The person you want to create or update.
+      **type:** Object
+          - must provide one of either id or email
+          - you cannot pass multiple identifiers
+      **notes:** Optional field; document id will be used as the identifier if nothing else is specified.
 
-          **name:** `attributes`
-          **description:** Attributes that you want to add or update for this person.
-          **type:** Object
-          **notes:** Optional field
+      **name:** `attributes`
+      **description:** Attributes that you want to add or update for this person.
+      **type:** Object
+      **notes:** Optional field
 
-          Example document if `identifiers` isn't included.
-          ```json
-          # /users/db01
-          {
-            "attributes": {
-              "first_name": "John",
-              "last_name": "Doe",
-              "email": "john.doe@example.com",
-              "plan": "basic"
-            }
-          }
-          ```
+      Example document if `identifiers` isn't included.
+      ```json
+      # /users/db01
+      {
+        "attributes": {
+          "first_name": "John",
+          "last_name": "Doe",
+          "email": "john.doe@example.com",
+          "plan": "basic"
+        }
+      }
+      ```
 
-          Example document if 'identifiers' is included.
+      Example document if 'identifiers' is included.
 
-          ```json
-          # /users/db01
-          {
-            "identifiers": {
-              "email": "john.doe@example.com",
-            },
-            "attributes": {
-              "first_name": "John",
-              "last_name": "Doe",
-              "email": "john.doe@example.com",
-              "plan": "basic"
-            }
-          }
-          ```
+      ```json
+      # /users/db01
+      {
+        "identifiers": {
+          "email": "john.doe@example.com",
+        },
+        "attributes": {
+          "first_name": "John",
+          "last_name": "Doe",
+          "email": "john.doe@example.com",
+          "plan": "basic"
+        }
+      }
+      ```
     properties:
       location: ${param:LOCATION}
       runtime: nodejs16
