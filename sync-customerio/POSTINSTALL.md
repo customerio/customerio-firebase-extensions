@@ -90,16 +90,13 @@ The following data attributes will sync if available:
 4. Log into your Customer.io account and confirm that a new profile with the `id` and `attributes` from the previous step was created in the [Activity Logs](https://fly.customer.io/env/last/activity_logs/identified) and added to the list of [People](https://fly.customer.io/env/last/people) in the workspace.
 
 #### Cloud Firestore Document Format Overview
-- **name:** `identifiers`
-- **description:** The person you want to create or update.
-- **type:** Object
-	- must provide one of either id or email
-	- you cannot pass multiple identifiers
-- **notes:** Optional field; document id will be used as the identifier if nothing else is specified.
-- **name:** `attributes`
-- **description:** Attributes that you want to add or update for this person.
-- **type:** Object
-- **notes:** Optional field
+The extension looks for two fields in the document structure:
+
+| name | description | type | notes |
+|---|----|----|----|
+| `identifiers` | The person you want to create or update. | Object, one of either `id` or `email` | Optional field; document id will be used as the identifier if nothing else is specified. |
+| `attributes` | Attributes that you want to add or update for this person. | Object | Optional field |
+
 
 Example document if `identifiers` isn't included.
 ```json
