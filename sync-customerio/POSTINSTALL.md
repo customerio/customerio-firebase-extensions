@@ -92,7 +92,7 @@ The following data attributes will sync if available:
 #### Cloud Firestore Document Format Overview
 The extension looks for two fields in the document structure:
 
-| name | description | type | notes |
+| Name | Description | Type | Notes |
 |---|----|----|----|
 | `identifiers` | The person you want to create or update. | Object, one of either `id` or `email` | Optional field; document id will be used as the identifier if nothing else is specified. |
 | `attributes` | Attributes that you want to add or update for this person. | Object | Optional field |

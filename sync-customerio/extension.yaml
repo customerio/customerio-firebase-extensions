@@ -151,7 +151,7 @@ params:
 
   - param: USERS_COLLECTION
     label: Firestore collection of user records to sync
-    description: A collection path to monitor for changes
+    description: A collection path to monitor for changes. Setting to an unused collection name will disable the function.
     type: string
     example: users
     default: _unconfigured_
