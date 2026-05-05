@@ -35,5 +35,9 @@
     "mocha": "^10.2.0",
     "sinon": "^15.0.3"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "@tootallnate/once": "3.0.1",
+    "serialize-javascript": "7.0.5"
+  }
 }
