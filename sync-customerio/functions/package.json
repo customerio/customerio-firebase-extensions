@@ -12,7 +12,7 @@
     "test": "mocha"
   },
   "engines": {
-    "node": "16"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
@@ -35,5 +35,11 @@
     "mocha": "^10.2.0",
     "sinon": "^15.0.3"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "@tootallnate/once": "3.0.1",
+    "js-yaml": "4.1.1",
+    "semver": "7.5.2",
+    "serialize-javascript": "7.0.5"
+  }
 }
