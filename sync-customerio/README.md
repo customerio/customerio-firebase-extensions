@@ -6,7 +6,11 @@
 
 
 
-**Details**: Install this extension to sync customers to Customer.io. This extension:
+**Details**: <!-- FIREBASE_EXTENSION_REPLACEMENT: extension="customerio/sync-customerio" package="@customerio/firebase-sync-customerio" -->
+
+> **Firebase Extensions shuts down on March 31, 2027.** Migrate to the [sync-customerio function kit](https://github.com/customerio/customerio-firebase-extensions/tree/main/kits/sync-customerio#migrate-from-the-sync-customerio-extension) (`@customerio/firebase-sync-customerio`), which does the same sync on 2nd gen Cloud Functions.
+
+Install this extension to sync customers to Customer.io. This extension:
 
 - Adds new customers when they sign up through Firebase Authentication.
 - Listens to a specified Cloud Firestore collection for updates to customer attributes.

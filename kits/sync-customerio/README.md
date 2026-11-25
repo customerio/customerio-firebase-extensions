@@ -25,6 +25,33 @@ firebase deploy --only functions
 
 The CLI prompts for any parameter it can't find in the kit instance's `.env` file.
 
+## Migrate from the sync-customerio extension
+
+The kit uses the same parameter names as the extension, so the Firebase CLI copies your existing values across.
+
+1. Update the Firebase CLI to `15.32.0` or later.
+2. Find the extension's instance ID (usually `sync-customerio`):
+   ```bash
+   firebase ext:list --project <project-id>
+   ```
+3. Check that the extension's `REGION` matches your account's [privacy page](https://fly.customer.io/settings/privacy). Earlier versions of the extension sent every workspace to the US endpoint, so an incorrect `REGION` value might not have caused errors until now.
+4. Deploy the kit alongside the extension:
+   ```bash
+   firebase ext:migrate --project <project-id> --ext-instance <instance-id> --package @customerio/firebase-sync-customerio
+   ```
+   If the CLI offers to uninstall the extension, answer **no** until you've verified the kit.
+5. Verify the kit. Create a test user in Firebase Authentication and write a document to `USERS_COLLECTION`, then check that both appear in your Customer.io [Activity Logs](https://fly.customer.io/env/last/activity_logs/identified). The kit's functions are named `kit-<instance-id>-createAuthProfile`, `kit-<instance-id>-deleteAuthProfile` and `kit-<instance-id>-syncFirestoreProfile`:
+   ```bash
+   firebase functions:log --project <project-id>
+   ```
+   While both are installed, each event is sent to Customer.io twice. The second identify or delete leaves the profile in the same state.
+6. Uninstall the extension:
+   ```bash
+   firebase ext:uninstall <instance-id> --project <project-id>
+   ```
+
+To roll back, reinstall the extension with the values from the kit instance's `.env` file first, then remove the kit with `firebase functions:kits:uninstall --instance <kit-instance-id> --project <project-id>`. Uninstalling the kit first deletes that `.env` file.
+
 ## Parameters
 
 | Name | Type | Description |
