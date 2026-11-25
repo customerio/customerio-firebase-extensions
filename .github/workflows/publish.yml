@@ -1,0 +1,52 @@
+name: publish
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  release-please:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs['kits/sync-customerio--release_created'] }}
+      sha: ${{ steps.release.outputs['kits/sync-customerio--sha'] }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v5
+
+  # npm trusted publishing is bound to this file, so publishing stays here. A release created by
+  # release-please with GITHUB_TOKEN doesn't fire the `release` event, so the push run publishes it.
+  publish:
+    needs: release-please
+    if: ${{ !cancelled() && (github.event_name == 'release' || needs.release-please.outputs.release_created == 'true') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: kits/sync-customerio
+    steps:
+      # Build the tagged commit, since overlapping pushes can make a later run create an earlier release.
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.release-please.outputs.sha || github.sha }}
+
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      # Publishes to the `next` dist-tag (publishConfig); promote with `npm dist-tag add` after verifying.
+      - run: npm publish --provenance --access public

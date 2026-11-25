@@ -1,0 +1,33 @@
+name: kit test
+
+on:
+  push:
+    branches: [main]
+    paths: ["kits/**", ".github/workflows/kit-test.yml"]
+  pull_request:
+    paths: ["kits/**", ".github/workflows/kit-test.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["22", "24"]
+    name: node ${{ matrix.node-version }}
+    defaults:
+      run:
+        working-directory: kits/sync-customerio
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: kits/sync-customerio/package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test

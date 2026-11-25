@@ -5,6 +5,8 @@ This repository is created and maintained by Customer.io and holds the source co
 
 - **Looking for additional extensions?** Let us know at product@customer.io.
 
+> **Firebase Extensions shuts down on March 31, 2027.** The sync-customerio extension is replaced by the [sync-customerio function kit](kits/sync-customerio), which includes [migration steps](kits/sync-customerio#migrate-from-the-sync-customerio-extension).
+
 ## Extensions Directory
 
 ### Sync contacts with Customer.io
