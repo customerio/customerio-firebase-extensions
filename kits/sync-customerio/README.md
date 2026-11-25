@@ -19,7 +19,7 @@ The kit deploys three 2nd gen Cloud Functions into your own Firebase project:
 ## Install
 
 ```bash
-firebase functions:kits:install --package @customerio/firebase-sync-customerio@latest
+firebase functions:kits:install --package @customerio/sync-customerio@latest
 firebase deploy --only functions
 ```
 
