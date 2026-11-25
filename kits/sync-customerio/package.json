@@ -1,0 +1,54 @@
+{
+  "name": "@customerio/sync-customerio",
+  "version": "0.1.0",
+  "description": "Function kit that syncs Firebase Authentication users and a Firestore collection to Customer.io.",
+  "license": "Apache-2.0",
+  "keywords": [
+    "customerio",
+    "firebase",
+    "firebase-function-kit",
+    "cloud-functions",
+    "firestore",
+    "firebase-auth"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/customerio/customerio-firebase-extensions.git",
+    "directory": "kits/sync-customerio"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "mocha",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  },
+  "dependencies": {
+    "customerio-node": "^4.0.0",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.0.0",
+    "@types/sinon": "^17.0.4",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "sinon": "^19.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.0"
+  }
+}
