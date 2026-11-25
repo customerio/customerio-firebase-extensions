@@ -28,4 +28,10 @@ describe("Config Tests", () => {
         process.env.REGION = "eu";
         expect(loadConfig().region).to.equal(RegionEU);
     });
+
+    it("should ignore an ENVIRONMENT env var from the host project", () => {
+        process.env.REGION = "us";
+        process.env.ENVIRONMENT = "dev";
+        expect(loadConfig().region).to.equal(RegionUS);
+    });
 });

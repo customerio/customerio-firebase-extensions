@@ -5,12 +5,6 @@ export interface Logger {
   error(message: string, ...args: any[]): void;
 };
 
-export enum Environment {
-  Prod = "prod",
-  Dev = "dev",
-  Test = "test",
-};
-
 export type Config = {
   site_id: string;
   api_key: string;
@@ -18,7 +12,6 @@ export type Config = {
   region_name: string;
 
   collection: string;
-  environment: Environment;
 };
 
 export type UserRecord = {

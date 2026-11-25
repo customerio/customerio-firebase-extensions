@@ -19,9 +19,9 @@ export const firestoreOnWrite = onDocumentWritten({
   const documentId: string = event.params.id;
   ctx.info("starting sync", {document_id: documentId});
 
-  let prev: UserRecord = {} as UserRecord;
-  let next: UserRecord = {} as UserRecord;
-
+  // An invalid previous version only loses the removed-attribute diff; it must not block
+  // a write that fixes the document.
+  let prev: UserRecord | null = null;
   if ( change.before.exists ) {
     const result = buildUserRecord(ctx, documentId, change.before);
     if ( result.error ) {
@@ -29,30 +29,34 @@ export const firestoreOnWrite = onDocumentWritten({
         data: change.before.data(),
         error: result.error,
       });
-      return;
+    } else {
+      prev = result.value;
     }
-    prev = result.value;
   }
 
-  if ( change.after.exists ) {
-    const result = buildUserRecord(ctx, documentId, change.after);
-    if ( result.error ) {
-      ctx.error("error building after user record", {
-        data: change.after.data(),
-        error: result.error,
-      });
+  if ( !change.after.exists ) {
+    if ( !prev ) {
+      ctx.error("skipping profile delete: no valid identifier on the deleted document", {document_id: documentId});
       return;
     }
-    next = result.value;
-  } else {
     try {
       await ctx.destroy(prev.identifier.value);
       ctx.info("deleted profile", {profile: prev});
     } catch (err) {
-      ctx.error("error deleting profile", {error: err});
+      ctx.error("error deleting profile", Context.describeError(err));
     }
     return;
   }
+
+  const result = buildUserRecord(ctx, documentId, change.after);
+  if ( result.error ) {
+    ctx.error("error building after user record", {
+      data: change.after.data(),
+      error: result.error,
+    });
+    return;
+  }
+  const next: UserRecord = result.value;
 
   ctx.info("checking for changes", {
     before: prev,
@@ -62,7 +66,7 @@ export const firestoreOnWrite = onDocumentWritten({
 
   // Attributes removed from the document are cleared in Customer.io by sending them as "".
   const attrChanges = next.attributes || {};
-  if ( prev.attributes ) {
+  if ( prev?.attributes ) {
     Object.keys(prev.attributes).forEach((key) => {
       if ( !attrChanges.hasOwnProperty(key) ) {
         attrChanges[key] = "";
@@ -78,6 +82,6 @@ export const firestoreOnWrite = onDocumentWritten({
     await ctx.identify(next.identifier.value, attrChanges);
     ctx.info("synced profile", {profile: {identifier: next.identifier, attributes: attrChanges}});
   } catch (err) {
-    ctx.error("error syncing profile", err);
+    ctx.error("error syncing profile", Context.describeError(err));
   }
 });
