@@ -1,5 +1,9 @@
 # Sync contacts with Customer.io
 
+<!-- FIREBASE_EXTENSION_REPLACEMENT: extension="customerio/sync-customerio" package="@customerio/sync-customerio" -->
+
+> **Firebase Extensions shuts down on March 31, 2027.** Migrate to the [sync-customerio function kit](https://github.com/customerio/customerio-firebase-extensions/tree/main/kits/sync-customerio#migrate-from-the-sync-customerio-extension) (`@customerio/sync-customerio`), which does the same sync on 2nd gen Cloud Functions.
+
 **Author**: Customer.io (**[https://customer.io](https://customer.io)**)
 
 **Description**: Sync customers to Customer.io for sending transactional and marketing emails, push, and in-app messages.
