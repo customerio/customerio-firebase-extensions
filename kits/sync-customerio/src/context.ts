@@ -19,7 +19,6 @@ export class Context {
     this.info("initialized context", {
       region: this.config.region_name,
       collection: this.config.collection,
-      environment: this.config.environment,
     });
   }
 
@@ -36,6 +35,11 @@ export class Context {
 
   error(message: string, ...args: any[]) {
     this.logger.error(message, ...args);
+  }
+
+  // Error's message and stack aren't enumerable, so the structured logger would drop them.
+  static describeError(err: unknown): { error: string, status?: number } {
+    return { error: String(err), status: (err as { statusCode?: number })?.statusCode };
   }
 
   identify(customerId: string | number, data: any = {}): Promise<any> {

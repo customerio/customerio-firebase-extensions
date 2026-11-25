@@ -24,7 +24,7 @@ export const authOnCreate = onUserCreated(options, async (event) => {
     await ctx.identify(user.uid, attributes);
     ctx.info("created profile", {customer_id: user.uid, attributes: attributes});
   } catch (err) {
-    ctx.error("error creating profile", {error: err});
+    ctx.error("error creating profile", Context.describeError(err));
   }
 });
 
@@ -37,6 +37,6 @@ export const authOnDelete = onUserDeleted(options, async (event) => {
     await ctx.destroy(user.uid);
     ctx.info("deleted profile", {customer_id: user.uid});
   } catch (err) {
-    ctx.error("error deleting profile", {error: err});
+    ctx.error("error deleting profile", Context.describeError(err));
   }
 });

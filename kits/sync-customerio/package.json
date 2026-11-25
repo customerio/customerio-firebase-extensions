@@ -40,9 +40,6 @@
     "firebase-admin": "^14.2.0",
     "firebase-functions": "^7.4.0"
   },
-  "peerDependencies": {
-    "firebase-functions": "^7.4.0"
-  },
   "devDependencies": {
     "@types/chai": "^4.3.20",
     "@types/mocha": "^10.0.10",

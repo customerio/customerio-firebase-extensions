@@ -55,9 +55,12 @@ describe("Auth Handler Tests", () => {
         sinon.assert.calledWith(destroyStub, user.uid);
     });
 
-    it("should not throw when Customer.io rejects the request", async () => {
-        identifyStub.rejects(new Error("unauthorized"));
+    it("should log the error message when Customer.io rejects the request", async () => {
+        const errorSpy = sandbox.spy(ctx, "error");
+        identifyStub.rejects(Object.assign(new Error("unauthorized"), { statusCode: 401 }));
 
         await authOnCreate.run(event);
+
+        sinon.assert.calledWith(errorSpy, sinon.match.string, { error: "Error: unauthorized", status: 401 });
     });
 });

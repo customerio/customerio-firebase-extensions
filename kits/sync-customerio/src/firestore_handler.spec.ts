@@ -66,6 +66,22 @@ describe("Firestore Handler Tests", () => {
         sinon.assert.notCalled(identifyStub);
     });
 
+    it("should sync a write that fixes a previously invalid document", async () => {
+        await firestoreOnWrite.run(writeEvent(
+            { identifiers: { id: "a", email: "b@customer.io" }, attributes: { "old": "x" } },
+            { identifiers: { id: "a" }, attributes: { "plan": "basic" } },
+        ));
+
+        sinon.assert.calledWith(identifyStub, "a", { "plan": "basic" });
+    });
+
+    it("should skip the delete when the deleted document had invalid identifiers", async () => {
+        await firestoreOnWrite.run(writeEvent({ identifiers: { phone: "123" } }, undefined));
+
+        sinon.assert.notCalled(destroyStub);
+        sinon.assert.notCalled(identifyStub);
+    });
+
     it("should skip documents with invalid identifiers", async () => {
         await firestoreOnWrite.run(writeEvent(undefined, { identifiers: { phone: "123" } }));
 
