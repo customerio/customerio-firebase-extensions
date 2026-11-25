@@ -18,7 +18,7 @@ export function loadConfig(): Config {
     config.api_key = process.env.API_KEY;
   }
 
-  if ( process.env.Region == "eu" ) {
+  if ( process.env.REGION == "eu" ) {
     config.region = RegionEU;
   }
 
