@@ -37,7 +37,7 @@ The kit uses the same parameter names as the extension, so the Firebase CLI copi
 3. Check that the extension's `REGION` matches your account's [privacy page](https://fly.customer.io/settings/privacy). Earlier versions of the extension sent every workspace to the US endpoint, so an incorrect `REGION` value might not have caused errors until now.
 4. Deploy the kit alongside the extension:
    ```bash
-   firebase ext:migrate --project <project-id> --ext-instance <instance-id> --package @customerio/firebase-sync-customerio
+   firebase ext:migrate --project <project-id> --ext-instance <instance-id> --package @customerio/sync-customerio
    ```
    If the CLI offers to uninstall the extension, answer **no** until you've verified the kit.
 5. Verify the kit. Create a test user in Firebase Authentication and write a document to `USERS_COLLECTION`, then check that both appear in your Customer.io [Activity Logs](https://fly.customer.io/env/last/activity_logs/identified). The kit's functions are named `kit-<instance-id>-createAuthProfile`, `kit-<instance-id>-deleteAuthProfile` and `kit-<instance-id>-syncFirestoreProfile`:
